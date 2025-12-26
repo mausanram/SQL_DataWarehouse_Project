@@ -1,0 +1,22 @@
+# --- Seguridad ---
+.env
+.venv
+venv/
+ENV/
+
+# --- Basura de Python ---
+__pycache__/
+*.pyc
+*.pyo
+
+# --- Basura ---
+.DS_Store
+Thumbs.db
+
+# --- Logs y Errores ---
+*.log
+error.log
+
+# --- IDEs (Configuraciones de tu editor) ---
+.vscode/
+.idea/
