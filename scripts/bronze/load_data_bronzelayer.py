@@ -23,7 +23,7 @@ load_dotenv()
 DB_CONFIG = {
     "dbname": os.getenv("DB_NAME"),
     "user": os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASSWORD"), # Change for os.getenv()
+    "password": os.getenv("DB_PASSWORD"),
     "host": os.getenv("DB_HOST"),
     "port": os.getenv("DB_PORT")
 }
@@ -42,26 +42,13 @@ list_TABLE_NAME = ["bronze.crm_cust_info",
                    "bronze.erp_loc_a101",
                    "bronze.erp_px_cat_g1v2"]
 
-def log_to_db(cursor, table, status, msg, start_time, log_id=None):
-    """Función auxiliar para escribir en la tabla de logs"""
-    if log_id is None:
-        # Insertar nuevo log (Inicio)
-        query = """
-            INSERT INTO bronze.load_logs (table_name, start_time, status)
-            VALUES (%s, %s, %s) RETURNING log_id;
-        """
-        cursor.execute(query, (table, start_time, status))
-        return cursor.fetchone()[0]
-    else:
-        # Actualizar log existente (Fin)
-        query = """
-            UPDATE bronze.load_logs 
-            SET end_time = %s, status = %s, error_message = %s 
-            WHERE log_id = %s;
-        """
-        cursor.execute(query, (datetime.now(), status, msg, log_id))
 
 def run_etl(table, csv_path):
+    """"This fuction load all the data into the bronze tables
+    Parameters: 
+        - table: the table name
+        - csv_path: the path, relative to the root path, where the file is located.
+    """
     print(f"==== Initializing Load in table: {table} ---")
     
     conn = None
@@ -80,7 +67,7 @@ def run_etl(table, csv_path):
         # === Load CSV info
         print("Loading the CSV file data...")
         with open(csv_path, 'r') as f:
-            # copy_expert permite pasar el archivo abierto directamente (f)
+            # copy_expert allows you to pass the open file directly
             sql_copy = f"COPY {table} FROM STDIN WITH (FORMAT CSV, HEADER)"
             cur.copy_expert(sql_copy, f)
 
@@ -88,7 +75,7 @@ def run_etl(table, csv_path):
         print("======= Success Load =======")
 
     except Exception as e:
-        print(f"❌ Detected Error: {e}")
+        print(f"Detected Error: {e}")
         if conn:
             conn.rollback() # Revert the step because we dont want incomplete info
             
@@ -101,6 +88,9 @@ def run_etl(table, csv_path):
             print("Elapsed Time: ", time_spend, end="\n\n")
 
 def main():
+    """
+    This function calls the run_etl() fuction multiple times.
+    """
     print("==========================================")
     print("   STARTING BRONZE LAYER INGESTION")
     print("==========================================\n")

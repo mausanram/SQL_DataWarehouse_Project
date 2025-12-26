@@ -22,5 +22,6 @@ CREATE SCHEMA silver;
 CREATE SCHEMA gold;
 
 
+
 -- Success mesaje
 SELECT 'Everythin works fine!' as mensaje;
