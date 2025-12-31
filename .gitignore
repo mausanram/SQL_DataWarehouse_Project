@@ -12,6 +12,7 @@ __pycache__/
 # --- Basura ---
 .DS_Store
 Thumbs.db
+load_data_bronzelayer.sql
 
 # --- Logs y Errores ---
 *.log
